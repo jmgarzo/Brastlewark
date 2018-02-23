@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Brastlewark</string>
+    <string name="content_authority">com.jmgarzo.brastlewark</string>
 </resources>
