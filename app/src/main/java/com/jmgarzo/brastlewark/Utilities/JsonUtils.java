@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.jmgarzo.brastlewark.model.Inhabitant;
+import com.jmgarzo.brastlewark.model.Profession;
+import com.jmgarzo.brastlewark.model.sync.BrastlewarkSyncTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,8 +37,7 @@ public class JsonUtils {
 
 
 
-
-    public static ArrayList<Inhabitant> getInhabitantsFromJson(Context context , String jsonStr) {
+    public static ArrayList<Inhabitant> getInhabitantsFromJson(Context context, String jsonStr) {
 
 
         ArrayList<Inhabitant> inhabitantsList = null;
@@ -63,6 +64,9 @@ public class JsonUtils {
                 //TODO: inhabitant.setProfessions()
                 //TODO: inhabitant.setFriends
 
+                JSONArray professionJsonArray = inhabitantJson.getJSONArray(INHABITANT_PROFESSIONS);
+                BrastlewarkSyncTask.addProfessions(context,professionJsonArray);
+
                 inhabitantsList.add(inhabitant);
             }
 
@@ -71,5 +75,24 @@ public class JsonUtils {
         }
 
         return inhabitantsList;
+    }
+
+    public static ArrayList<Profession> getProfessionsFromJson(JSONArray professionJsonArray) {
+        ArrayList<Profession> professionsList = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < professionJsonArray.length(); i++) {
+
+                Profession profession = new Profession();
+                profession.setName(professionJsonArray.getString(i));
+
+                professionsList.add(profession);
+
+
+            }
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.toString());
+        }
+        return professionsList;
     }
 }

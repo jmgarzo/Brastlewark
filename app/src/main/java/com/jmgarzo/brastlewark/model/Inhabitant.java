@@ -1,7 +1,10 @@
 package com.jmgarzo.brastlewark.model;
 
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.jmgarzo.brastlewark.model.data.BrastlewarkContract;
 
 import java.util.List;
 
@@ -82,6 +85,21 @@ public class Inhabitant implements Parcelable {
 
     public void setListProfession(List<String> listProfession) {
         this.listProfession = listProfession;
+    }
+
+
+    public ContentValues getContentValues() {
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(BrastlewarkContract.InhabitantsEntry._ID,getId());
+        contentValues.put(BrastlewarkContract.InhabitantsEntry.NAME,getName());
+        contentValues.put(BrastlewarkContract.InhabitantsEntry.THUMBNAIL,getThumbnail());
+        contentValues.put(BrastlewarkContract.InhabitantsEntry.AGE,getAge());
+        contentValues.put(BrastlewarkContract.InhabitantsEntry.WEIGHT,getWeight());
+        contentValues.put(BrastlewarkContract.InhabitantsEntry.HEIGHT,getHeight());
+        contentValues.put(BrastlewarkContract.InhabitantsEntry.HAIR_COLOR,getHair_color());
+
+        return contentValues;
     }
 
 

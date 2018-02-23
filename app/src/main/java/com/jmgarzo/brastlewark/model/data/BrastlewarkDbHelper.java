@@ -21,7 +21,6 @@ public class BrastlewarkDbHelper extends SQLiteOpenHelper {
                     BrastlewarkContract.InhabitantsEntry.AGE + " INTEGER NOT NULL, " +
                     BrastlewarkContract.InhabitantsEntry.WEIGHT + " REAL NOT NULL, " +
                     BrastlewarkContract.InhabitantsEntry.HEIGHT + " REAL NOT NULL, " +
-                    BrastlewarkContract.InhabitantsEntry.WEIGHT + " INTEGER NOT NULL, " +
                     BrastlewarkContract.InhabitantsEntry.HAIR_COLOR + " TEXT NOT NULL " +
                     " );";
 
@@ -29,7 +28,7 @@ public class BrastlewarkDbHelper extends SQLiteOpenHelper {
     private final String SQL_CREATE_PROFESSIONS_TABLE =
             "CREATE TABLE " + BrastlewarkContract.ProfessionsEntry.TABLE_NAME + " ( " +
                     BrastlewarkContract.ProfessionsEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT , " +
-                    BrastlewarkContract.InhabitantsEntry.NAME + " TEXT NOT NULL " +
+                    BrastlewarkContract.InhabitantsEntry.NAME + " TEXT  UNIQUE NOT NULL " +
                     " );";
 
     private final String SQL_CREATE_INHABITANT_PROFESSION =
@@ -58,8 +57,6 @@ public class BrastlewarkDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_INHABITANTS_TABLE);
         db.execSQL(SQL_CREATE_PROFESSIONS_TABLE);
         db.execSQL(SQL_CREATE_INHABITANT_PROFESSION);
-
-
     }
 
     @Override

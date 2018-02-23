@@ -1,7 +1,10 @@
 package com.jmgarzo.brastlewark.model;
 
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.jmgarzo.brastlewark.model.data.BrastlewarkContract;
 
 /**
  * Created by jmgarzo on 2/23/2018.
@@ -28,6 +31,12 @@ public class Profession implements Parcelable {
         this.name = name;
     }
 
+
+    public ContentValues getContentValues() {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(BrastlewarkContract.ProfessionsEntry.NAME, getName());
+        return contentValues;
+    }
 
     @Override
     public int describeContents() {

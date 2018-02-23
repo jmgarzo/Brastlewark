@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -347,13 +348,21 @@ public class BrastlewarkProvider extends ContentProvider {
                         if (value == null) {
                             throw new IllegalArgumentException("Cannot have null content values");
                         }
-                        long id = db.insert(BrastlewarkContract.ProfessionsEntry.TABLE_NAME, null, value);
+
+                        long id = 0;
+                        id = db.insertOrThrow(BrastlewarkContract.ProfessionsEntry.TABLE_NAME, null, value);
+
                         if (id != -1) {
                             numInserted++;
                         }
                     }
                     db.setTransactionSuccessful();
 
+                } catch (SQLiteConstraintException e) {
+                    //Just for debug
+                    Log.d(LOG_TAG, e.toString());
+                } catch (SQLiteException e) {
+                    Log.e(LOG_TAG, e.toString());
                 } finally {
                     db.endTransaction();
                 }

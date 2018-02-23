@@ -59,7 +59,7 @@ public class BrastlewarkContract {
     public static final class InhabitantProfessionEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INHABITANT_PROFESSION).build();
 
-        public static final String TABLE_NAME = "inhabitant-profession";
+        public static final String TABLE_NAME = "inhabitant_profession";
         public static final String INHABITANT_ID = "inhabitant_id";
         public static final String PROFESSION_ID = "profession_id";
 
