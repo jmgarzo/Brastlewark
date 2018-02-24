@@ -30,6 +30,9 @@ public class BrastlewarkProvider extends ContentProvider {
 
     static final int INHABITANT_PROFESSION = 300;
 
+    static final int INHABITANT_FRIEND = 400;
+
+
     private BrastlewarkDbHelper mOpenHelper;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
@@ -50,7 +53,7 @@ public class BrastlewarkProvider extends ContentProvider {
     }
 
 
-    private Cursor getBusStopsByRoute(
+    private Cursor getProfessionByInhabitantId(
             Uri uri, String[] projection, String sortOrder) {
         String selection = BrastlewarkContract.InhabitantProfessionEntry.INHABITANT_ID + " = ? ";
         String[] selectionArgs = new String[]{BrastlewarkContract.InhabitantProfessionEntry.getInhabitantIdFromUri(uri)};
@@ -76,6 +79,9 @@ public class BrastlewarkProvider extends ContentProvider {
         matcher.addURI(BrastlewarkContract.CONTENT_AUTHORITY, BrastlewarkContract.PATH_PROFESSIONS + "/*", PROFESSION_WITH_INHABITANT_ID);
 
         matcher.addURI(BrastlewarkContract.CONTENT_AUTHORITY, BrastlewarkContract.PATH_INHABITANT_PROFESSION, INHABITANT_PROFESSION);
+
+        matcher.addURI(BrastlewarkContract.CONTENT_AUTHORITY, BrastlewarkContract.PATH_INHABITANT_FRIEND, INHABITANT_FRIEND);
+
 
 
         return matcher;
@@ -132,13 +138,26 @@ public class BrastlewarkProvider extends ContentProvider {
                 break;
             }
             case PROFESSION_WITH_INHABITANT_ID: {
-                returnCursor = getBusStopsByRoute(uri, projection, sortOrder);
+                returnCursor = getProfessionByInhabitantId(uri, projection, sortOrder);
                 break;
             }
 
             case INHABITANT_PROFESSION: {
                 returnCursor = mOpenHelper.getReadableDatabase().query(
                         BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+
+            case INHABITANT_FRIEND: {
+                returnCursor = mOpenHelper.getReadableDatabase().query(
+                        BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -169,6 +188,8 @@ public class BrastlewarkProvider extends ContentProvider {
             case PROFESSION:
                 return BrastlewarkContract.ProfessionsEntry.CONTENT_DIR_TYPE;
             case INHABITANT_PROFESSION:
+                return BrastlewarkContract.InhabitantProfessionEntry.CONTENT_DIR_TYPE;
+            case INHABITANT_FRIEND:
                 return BrastlewarkContract.InhabitantProfessionEntry.CONTENT_DIR_TYPE;
         }
         return null;
@@ -222,6 +243,23 @@ public class BrastlewarkProvider extends ContentProvider {
                 }
                 break;
             }
+
+            case INHABITANT_FRIEND: {
+                try {
+                    long id = db.insertOrThrow(BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME,
+                            null,
+                            values);
+
+                    if (id > 0) {
+                        returnUri = ContentUris.withAppendedId(BrastlewarkContract.InhabitantFriendEntry.CONTENT_URI, id);
+                    } else {
+                        throw new android.database.SQLException("Failed to insert row into: " + uri);
+                    }
+                } catch (SQLiteException e) {
+                    Log.e(LOG_TAG, e.toString());
+                }
+                break;
+            }
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
@@ -258,6 +296,15 @@ public class BrastlewarkProvider extends ContentProvider {
             case INHABITANT_PROFESSION: {
                 numDeleted = db.delete(
                         BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+                break;
+            }
+
+            case INHABITANT_FRIEND: {
+                numDeleted = db.delete(
+                        BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME,
                         selection,
                         selectionArgs
                 );
@@ -307,6 +354,14 @@ public class BrastlewarkProvider extends ContentProvider {
                         selectionArgs);
                 break;
             }
+            case INHABITANT_FRIEND: {
+                numUpdates = db.update(BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            }
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -379,6 +434,31 @@ public class BrastlewarkProvider extends ContentProvider {
                         long id = -1;
                         try {
                             id = db.insertOrThrow(BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME, null, value);
+                        } catch (SQLiteException e) {
+                            Log.d(LOG_TAG, e.toString());
+                        }
+                        if (id != -1) {
+                            numInserted++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+
+                } finally {
+                    db.endTransaction();
+                }
+                break;
+            }
+
+            case INHABITANT_FRIEND: {
+                db.beginTransaction();
+                try {
+                    for (ContentValues value : values) {
+                        if (value == null) {
+                            throw new IllegalArgumentException("Cannot have null content values");
+                        }
+                        long id = -1;
+                        try {
+                            id = db.insertOrThrow(BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME, null, value);
                         } catch (SQLiteException e) {
                             Log.d(LOG_TAG, e.toString());
                         }

@@ -22,7 +22,7 @@ public class Inhabitant implements Parcelable {
     private double height;
     private String hair_color;
     private List<Profession> listProfession;
-    private List<String> listIdFriends;
+    private List<String> listFriends;
 
     public int getId() {
         return id;
@@ -88,7 +88,13 @@ public class Inhabitant implements Parcelable {
         this.listProfession = listProfession;
     }
 
+    public List<String> getListFriends() {
+        return listFriends;
+    }
 
+    public void setListFriends(List<String> listFriends) {
+        this.listFriends = listFriends;
+    }
 
     public ContentValues getContentValues() {
         ContentValues contentValues = new ContentValues();

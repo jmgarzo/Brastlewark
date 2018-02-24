@@ -45,6 +45,20 @@ public class BrastlewarkDbHelper extends SQLiteOpenHelper {
                     BrastlewarkContract.ProfessionsEntry.TABLE_NAME + " ( " + BrastlewarkContract.ProfessionsEntry._ID + ") ON DELETE CASCADE " +
                     ");";
 
+    private final String SQL_CREATE_INHABITANT_FRIEND =
+            "CREATE TABLE " + BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME + " ( " +
+                    BrastlewarkContract.InhabitantFriendEntry.INHABITANT_ID + " INTEGER , " +
+                    BrastlewarkContract.InhabitantFriendEntry.FRIEND_ID + " INTEGER, " +
+                    " PRIMARY KEY( " +
+                    BrastlewarkContract.InhabitantFriendEntry.INHABITANT_ID + " , " +
+                    BrastlewarkContract.InhabitantFriendEntry.FRIEND_ID +
+                    " ), " +
+                    " FOREIGN KEY( " + BrastlewarkContract.InhabitantFriendEntry.INHABITANT_ID + " ) REFERENCES " +
+                    BrastlewarkContract.InhabitantsEntry.TABLE_NAME + " ( " + BrastlewarkContract.InhabitantsEntry._ID + ") ON DELETE CASCADE, " +
+                    "FOREIGN KEY ( " + BrastlewarkContract.InhabitantFriendEntry.FRIEND_ID + " ) REFERENCES " +
+                    BrastlewarkContract.ProfessionsEntry.TABLE_NAME + " ( " + BrastlewarkContract.InhabitantsEntry._ID + ") ON DELETE CASCADE " +
+                    ");";
+
 
     public BrastlewarkDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -57,6 +71,8 @@ public class BrastlewarkDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_INHABITANTS_TABLE);
         db.execSQL(SQL_CREATE_PROFESSIONS_TABLE);
         db.execSQL(SQL_CREATE_INHABITANT_PROFESSION);
+        db.execSQL(SQL_CREATE_INHABITANT_FRIEND);
+
     }
 
     @Override

@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.jmgarzo.brastlewark.model.Inhabitant;
 import com.jmgarzo.brastlewark.model.Profession;
-import com.jmgarzo.brastlewark.model.sync.BrastlewarkSyncTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,7 +64,7 @@ public class JsonUtils {
                 inhabitant.setListProfession(getProfessionsFromJson(professionJsonArray));
 
                 JSONArray friendsJsonArray = inhabitantJson.getJSONArray(INHABITANT_FRIENDS);
-                inhabitant.setListIdFriends(getIdFriendFromJson(context,friendsJsonArray));
+                inhabitant.setListFriends(getFriendFromJson(friendsJsonArray));
 
                 inhabitantsList.add(inhabitant);
             }
@@ -94,6 +93,18 @@ public class JsonUtils {
             Log.e(LOG_TAG, e.toString());
         }
         return professionsList;
+    }
+
+    public static ArrayList<String> getFriendFromJson(JSONArray friendsJsonArray){
+        ArrayList<String> friendsNamesList = new ArrayList<>();
+        for (int i = 0; i < friendsJsonArray.length(); i++) {
+            try {
+                friendsNamesList.add(friendsJsonArray.getString(i));
+            } catch (JSONException e) {
+                Log.e(LOG_TAG,e.toString());
+            }
+        }
+        return friendsNamesList;
     }
 
     public static ArrayList<Integer> getIdFriendFromJson(Context context,JSONArray friendsJsonArray) {

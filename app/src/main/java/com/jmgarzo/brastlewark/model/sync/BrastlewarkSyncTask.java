@@ -5,18 +5,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
 
 import com.jmgarzo.brastlewark.Utilities.DbUtils;
-import com.jmgarzo.brastlewark.Utilities.JsonUtils;
 import com.jmgarzo.brastlewark.Utilities.NetworkUtils;
 import com.jmgarzo.brastlewark.model.Inhabitant;
 import com.jmgarzo.brastlewark.model.Profession;
 import com.jmgarzo.brastlewark.model.data.BrastlewarkContract;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +51,11 @@ public class BrastlewarkSyncTask {
                 Log.v(LOG_TAG, professionAdded + " professions added ");
 
                 int inhabitantProfessionAdded = addInhabitantProfession(context, inhabitantsList);
-                Log.v(LOG_TAG, inhabitantProfessionAdded + " Inhabitant-ProfessionAdded added ");
+                Log.v(LOG_TAG, inhabitantProfessionAdded + " Inhabitant-Profession added ");
+
+                int inhabitantFriendAdded = addInhabitantFriend(context, inhabitantsList);
+                Log.v(LOG_TAG, inhabitantFriendAdded + " Inhabitant-Friend added ");
+
 
 
 
@@ -69,6 +67,11 @@ public class BrastlewarkSyncTask {
 
     synchronized public static void deleteDb(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
+
+        int inhabitantFriendDeleted = contentResolver.delete(BrastlewarkContract.InhabitantFriendEntry.CONTENT_URI,
+                null,
+                null);
+        Log.d(LOG_TAG, "Inhabitant-Friend Deleted: " + inhabitantFriendDeleted);
 
         int inhabitantProfessionDeleted = contentResolver.delete(BrastlewarkContract.InhabitantProfessionEntry.CONTENT_URI,
                 null,
@@ -153,6 +156,52 @@ public class BrastlewarkSyncTask {
 
         }
         result = contentResolver.bulkInsert(BrastlewarkContract.InhabitantProfessionEntry.CONTENT_URI,
+                totalContentValuesList.toArray(new ContentValues[totalContentValuesList.size()]));
+
+        return result;
+    }
+
+    private static int addInhabitantFriend(Context context, ArrayList<Inhabitant> inhabitantsList) {
+        int result = 0;
+
+        ArrayList<ContentValues> totalContentValuesList = new ArrayList<>();
+        ContentResolver contentResolver = context.getContentResolver();
+
+        HashMap<String, Integer> inhabitantHashMap = new HashMap<>();
+
+
+        //Select all Professions in Database
+        Cursor cursor = contentResolver.query(BrastlewarkContract.InhabitantsEntry.CONTENT_URI,
+                DbUtils.INHABITANT_COLUMNS,
+                null,
+                null,
+                null);
+
+        //Load all Professions in a hashmap
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                inhabitantHashMap.put(cursor.getString(DbUtils.COL_INHABITANT_NAME), cursor.getInt(DbUtils.COL_INHABITANT_ID));
+            } while (cursor.moveToNext());
+
+        }
+
+
+        //Get all relations between inhabitant and profession
+        for (Inhabitant inhabitant : inhabitantsList) {
+            int inhabitantId = inhabitant.getId();
+
+            for (String friend : inhabitant.getListFriends()) {
+                int friendId = inhabitantHashMap.get(friend);
+
+                ContentValues cv = new ContentValues();
+                cv.put(BrastlewarkContract.InhabitantFriendEntry.INHABITANT_ID, inhabitantId);
+                cv.put(BrastlewarkContract.InhabitantFriendEntry.FRIEND_ID, friendId);
+                totalContentValuesList.add(cv);
+
+            }
+
+        }
+        result = contentResolver.bulkInsert(BrastlewarkContract.InhabitantFriendEntry.CONTENT_URI,
                 totalContentValuesList.toArray(new ContentValues[totalContentValuesList.size()]));
 
         return result;
