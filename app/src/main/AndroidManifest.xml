@@ -28,6 +28,10 @@
         <service
             android:name=".model.sync.services.SyncInhabitantService"
             android:exported="false" />
+
+        <service
+            android:name=".model.sync.services.DeleteDatabaseService"
+            android:exported="false" />
     </application>
 
 </manifest>

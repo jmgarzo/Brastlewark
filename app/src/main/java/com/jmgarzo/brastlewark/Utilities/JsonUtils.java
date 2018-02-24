@@ -35,8 +35,6 @@ public class JsonUtils {
     public static final String INHABITANT_FRIENDS = "friends";
 
 
-
-
     public static ArrayList<Inhabitant> getInhabitantsFromJson(Context context, String jsonStr) {
 
 
@@ -61,11 +59,13 @@ public class JsonUtils {
                 inhabitant.setWeight(inhabitantJson.getDouble(INHABITANT_WEIGHT));
                 inhabitant.setHeight(inhabitantJson.getDouble(INHABITANT_HEIGHT));
                 inhabitant.setHair_color(inhabitantJson.getString(INHABITANT_HAIR_COLOR));
-                //TODO: inhabitant.setProfessions()
-                //TODO: inhabitant.setFriends
+
 
                 JSONArray professionJsonArray = inhabitantJson.getJSONArray(INHABITANT_PROFESSIONS);
-                BrastlewarkSyncTask.addProfessions(context,professionJsonArray);
+                inhabitant.setListProfession(getProfessionsFromJson(professionJsonArray));
+
+                JSONArray friendsJsonArray = inhabitantJson.getJSONArray(INHABITANT_FRIENDS);
+                inhabitant.setListIdFriends(getIdFriendFromJson(context,friendsJsonArray));
 
                 inhabitantsList.add(inhabitant);
             }
@@ -95,4 +95,24 @@ public class JsonUtils {
         }
         return professionsList;
     }
+
+    public static ArrayList<Integer> getIdFriendFromJson(Context context,JSONArray friendsJsonArray) {
+        ArrayList<String> friendsNamesList = new ArrayList<>();
+        ArrayList<Integer> friendIdList = new ArrayList<>();
+        try {
+            for (int i = 0; i < friendsJsonArray.length(); i++) {
+                friendsNamesList.add(friendsJsonArray.getString(i));
+
+            }
+
+            friendIdList = DbUtils.getIdFriends(context,friendsNamesList);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.toString());
+        }
+
+
+        return friendIdList;
+    }
+
+
 }

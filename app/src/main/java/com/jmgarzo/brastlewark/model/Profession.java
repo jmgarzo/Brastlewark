@@ -1,9 +1,11 @@
 package com.jmgarzo.brastlewark.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.jmgarzo.brastlewark.Utilities.DbUtils;
 import com.jmgarzo.brastlewark.model.data.BrastlewarkContract;
 
 /**
@@ -38,6 +40,13 @@ public class Profession implements Parcelable {
         return contentValues;
     }
 
+    public void cursorToProfession(Cursor cursor) {
+
+        id = cursor.getInt(DbUtils.COL_PROFESSION_ID);
+        name = cursor.getString(DbUtils.COL_PROFESSION_NAME);
+
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -68,4 +77,23 @@ public class Profession implements Parcelable {
             return new Profession[size];
         }
     };
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean result = false;
+        if (obj == null || obj.getClass() != getClass()) {
+            result = false;
+        } else {
+            Profession profession = (Profession) obj;
+            if (this.name.equals(profession.getName())) {
+                result = true;
+            }
+        }
+        return result;
+    }
 }

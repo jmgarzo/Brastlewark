@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.jmgarzo.brastlewark.model.Inhabitant;
+import com.jmgarzo.brastlewark.model.Profession;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,6 +80,5 @@ public class NetworkUtils {
 
         return inhabitantsList;
     }
-
 
 }

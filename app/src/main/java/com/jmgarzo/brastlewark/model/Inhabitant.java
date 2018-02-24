@@ -21,7 +21,8 @@ public class Inhabitant implements Parcelable {
     private double weight;
     private double height;
     private String hair_color;
-    private List<String> listProfession;
+    private List<Profession> listProfession;
+    private List<String> listIdFriends;
 
     public int getId() {
         return id;
@@ -79,13 +80,14 @@ public class Inhabitant implements Parcelable {
         this.hair_color = hair_color;
     }
 
-    public List<String> getListProfession() {
+    public List<Profession> getListProfession() {
         return listProfession;
     }
 
-    public void setListProfession(List<String> listProfession) {
+    public void setListProfession(List<Profession> listProfession) {
         this.listProfession = listProfession;
     }
+
 
 
     public ContentValues getContentValues() {
@@ -117,7 +119,7 @@ public class Inhabitant implements Parcelable {
         dest.writeDouble(this.weight);
         dest.writeDouble(this.height);
         dest.writeString(this.hair_color);
-        dest.writeStringList(this.listProfession);
+        dest.writeTypedList(this.listProfession);
     }
 
     public Inhabitant() {
@@ -131,10 +133,10 @@ public class Inhabitant implements Parcelable {
         this.weight = in.readDouble();
         this.height = in.readDouble();
         this.hair_color = in.readString();
-        this.listProfession = in.createStringArrayList();
+        this.listProfession = in.createTypedArrayList(Profession.CREATOR);
     }
 
-    public static final Parcelable.Creator<Inhabitant> CREATOR = new Parcelable.Creator<Inhabitant>() {
+    public static final Creator<Inhabitant> CREATOR = new Creator<Inhabitant>() {
         @Override
         public Inhabitant createFromParcel(Parcel source) {
             return new Inhabitant(source);
