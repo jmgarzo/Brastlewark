@@ -23,7 +23,7 @@ public class BrastlewarkProvider extends ContentProvider {
     private final String LOG_TAG = BrastlewarkProvider.class.getSimpleName();
 
     static final int INHABITANT = 100;
-    static final int INHABITANT_WITH_ID = 101;
+    static final int FRIENDS_BY_INHABITANT_ID = 101;
 
     static final int PROFESSION = 200;
     static final int PROFESSION_WITH_INHABITANT_ID = 201;
@@ -96,6 +96,45 @@ where inhabitant_profession.inhabitant_id = 1
                         " = " + BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantProfessionEntry.PROFESSION_ID);
     }
 
+    private static final SQLiteQueryBuilder sFriendsByInhabitantIdBuilder;
+
+
+//    select FRI.*
+//    from inhabitants INA inner join inhabitant_friend INAFRI inner join inhabitants FRI
+//    on INA._id = INAFRI.inhabitant_id and INAFRI.friend_id = FRI._id
+//    where INA._id = 0
+
+    static {
+        sFriendsByInhabitantIdBuilder = new SQLiteQueryBuilder();
+        sFriendsByInhabitantIdBuilder.setTables(
+                BrastlewarkContract.InhabitantsEntry.TABLE_NAME + " INA " +
+                        " INNER JOIN " + BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME + " INAFRI " +
+                        " INNER JOIN " + BrastlewarkContract.InhabitantsEntry.TABLE_NAME + " FRI " +
+                        " ON " +
+                        "INA."+ BrastlewarkContract.InhabitantsEntry._ID +
+                        " = " + "INAFRI." + BrastlewarkContract.InhabitantFriendEntry.INHABITANT_ID+
+                        " AND INAFRI."+ BrastlewarkContract.InhabitantFriendEntry.FRIEND_ID +
+                        " = " + "FRI."+ BrastlewarkContract.InhabitantsEntry._ID
+        );
+    }
+
+
+//    select * from inhabitants where inhabitants._id in (select friend_id from inhabitant_friend
+//            where inhabitant_friend.inhabitant_id = 0)
+    private Cursor getFriendsByInhabitantId(
+            Uri uri, String[] projection, String sortOrder) {
+        String selection = "INA." + BrastlewarkContract.InhabitantsEntry._ID + " = ? ";
+        String[] selectionArgs = new String[]{BrastlewarkContract.InhabitantProfessionEntry.getInhabitantIdFromUri(uri)};
+        return sFriendsByInhabitantIdBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
     private Cursor getProfessionByInhabitantId(
             Uri uri, String[] projection, String sortOrder) {
         String selection = BrastlewarkContract.InhabitantProfessionEntry.INHABITANT_ID + " = ? ";
@@ -115,7 +154,7 @@ where inhabitant_profession.inhabitant_id = 1
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         matcher.addURI(BrastlewarkContract.CONTENT_AUTHORITY, BrastlewarkContract.PATH_INHABITANTS, INHABITANT);
-        matcher.addURI(BrastlewarkContract.CONTENT_AUTHORITY, BrastlewarkContract.PATH_INHABITANTS + "/*", INHABITANT_WITH_ID);
+        matcher.addURI(BrastlewarkContract.CONTENT_AUTHORITY, BrastlewarkContract.PATH_INHABITANTS + "/*", FRIENDS_BY_INHABITANT_ID);
 
         matcher.addURI(BrastlewarkContract.CONTENT_AUTHORITY, BrastlewarkContract.PATH_PROFESSIONS, PROFESSION);
         matcher.addURI(BrastlewarkContract.CONTENT_AUTHORITY, BrastlewarkContract.PATH_PROFESSIONS + "/*", PROFESSION_WITH_INHABITANT_ID);
@@ -153,16 +192,17 @@ where inhabitant_profession.inhabitant_id = 1
                 );
                 break;
             }
-            case INHABITANT_WITH_ID: {
-                returnCursor = mOpenHelper.getReadableDatabase().query(
-                        BrastlewarkContract.InhabitantsEntry.TABLE_NAME,
-                        projection,
-                        BrastlewarkContract.InhabitantsEntry._ID + " = ?",
-                        new String[]{uri.getPathSegments().get(1)},
-                        null,
-                        null,
-                        sortOrder
-                );
+            case FRIENDS_BY_INHABITANT_ID: {
+//                returnCursor = mOpenHelper.getReadableDatabase().query(
+//                        BrastlewarkContract.InhabitantsEntry.TABLE_NAME,
+//                        projection,
+//                        BrastlewarkContract.InhabitantsEntry._ID + " = ?",
+//                        new String[]{uri.getPathSegments().get(1)},
+//                        null,
+//                        null,
+//                        sortOrder
+//                );
+                returnCursor = getFriendsByInhabitantId(uri, projection, sortOrder);
                 break;
             }
 
@@ -228,7 +268,7 @@ where inhabitant_profession.inhabitant_id = 1
         switch (sUriMatcher.match(uri)) {
             case INHABITANT:
                 return BrastlewarkContract.InhabitantsEntry.CONTENT_DIR_TYPE;
-            case INHABITANT_WITH_ID:
+            case FRIENDS_BY_INHABITANT_ID:
                 return BrastlewarkContract.InhabitantsEntry.CONTENT_ITEM_TYPE;
             case PROFESSION:
                 return BrastlewarkContract.ProfessionsEntry.CONTENT_DIR_TYPE;

@@ -3,14 +3,12 @@ package com.jmgarzo.brastlewark.View;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +39,6 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     private static final int FRIENDS_LOADER = 13;
 
 
-
     @BindView(R.id.detail_age_textview)
     TextView mAge;
     @BindView(R.id.detail_weight_textview)
@@ -54,8 +51,10 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     ImageView mImageView;
     @BindView(R.id.detail_profession_values)
     TextView mProfessions;
-    @BindView(R.id.detail_friend_recyclerview)
-    RecyclerView mFriendRecyclerView;
+    @BindView(R.id.detail_friends_values)
+    TextView mFriends;
+//    @BindView(R.id.detail_friend_recyclerview)
+//    RecyclerView mFriendRecyclerView;
 
 
     public DetailActivityFragment() {
@@ -93,9 +92,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         mHeight.setText(height);
         mHairColor.setText(mInhabitant.getHair_color());
 
+
         getActivity().getSupportLoaderManager().initLoader(PROFESSION_LOADER, null, this);
         getActivity().getSupportLoaderManager().initLoader(FRIENDS_LOADER, null, this);
-
 
 
         return viewRoot;
@@ -114,11 +113,16 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                         null,
                         null);
             }
-            case FRIENDS_LOADER:{
-                Uri uri = BrastlewarkContract.InhabitantFriendEntry.buildInhabitantAndProfessions(Integer.valueOf(mInhabitant.getId()).toString());
+            case FRIENDS_LOADER: {
+                Uri uri = BrastlewarkContract.InhabitantsEntry.buildFriendsAndInhabitants(Integer.valueOf(mInhabitant.getId()).toString());
 
-                return new CursorLoader((getActivity(),
-                        BrastlewarkContract.ProfessionsEntry.TABLE_NAME.))
+                return new CursorLoader(getActivity(),
+                        uri,
+                        new String[]{"FRI."+ BrastlewarkContract.InhabitantsEntry.NAME},
+                        null,
+                        null,
+                        null);
+
             }
         }
         return null;
@@ -127,31 +131,61 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-        if (loader.getId() == PROFESSION_LOADER) {
-            mProfessionsList = new ArrayList<>();
-            String professions = "";
-            if (data.moveToFirst()) {
-                do {
-                    int nameIndex = data.getColumnIndex(BrastlewarkContract.ProfessionsEntry.NAME);
-                    String name = data.getString(nameIndex);
-                    mProfessionsList.add(name);
-                } while (data.moveToNext());
+        switch (loader.getId()) {
+            case PROFESSION_LOADER: {
+                mProfessionsList = new ArrayList<>();
+                String professions = "";
+                if (data.moveToFirst()) {
+                    do {
+                        int nameIndex = data.getColumnIndex(BrastlewarkContract.ProfessionsEntry.NAME);
+                        String name = data.getString(nameIndex);
+                        mProfessionsList.add(name);
+                    } while (data.moveToNext());
 
-                for (int i = 0; i < mProfessionsList.size(); i++) {
-                    if (i == mProfessionsList.size()-1) {
-                        professions = professions.concat(mProfessionsList.get(i));
-                    } else {
-                        professions = professions.concat(mProfessionsList.get(i)).concat(", ");
+                    for (int i = 0; i < mProfessionsList.size(); i++) {
+                        if (i == mProfessionsList.size() - 1) {
+                            professions = professions.concat(mProfessionsList.get(i));
+                        } else {
+                            professions = professions.concat(mProfessionsList.get(i)).concat(", ");
+                        }
                     }
                 }
+                mProfessions.setText(professions);
+                break;
             }
-            mProfessions.setText(professions);
+            case FRIENDS_LOADER: {
+                ArrayList<String> friendsList = new ArrayList<>();
 
+                String friends = "";
+
+                if (data.moveToFirst()) {
+                    do {
+                        friendsList.add(data.getString(0));
+                    } while (data.moveToNext());
+                }
+
+                for (int i = 0; i < friendsList.size(); i++) {
+                    if (i == friendsList.size() - 1) {
+                        friends = friends.concat(friendsList.get(i));
+                    } else {
+                        friends = friends.concat(friendsList.get(i)).concat(", ");
+                    }
+                }
+                mFriends.setText(friends);
+
+                break;
+            }
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        switch (loader.getId()) {
+            case FRIENDS_LOADER: {
+                break;
+            }
+        }
     }
+
+
 }

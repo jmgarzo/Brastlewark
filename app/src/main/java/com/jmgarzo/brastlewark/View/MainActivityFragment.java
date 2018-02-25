@@ -5,7 +5,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -33,7 +32,8 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, InhabitantAdapter.InhabitantAdapterOnClickHandler {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        InhabitantAdapter.InhabitantAdapterOnClickHandler {
 
     private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     public static final String INHABITANT_INTENT_TAG = "inhabitant_tag";
