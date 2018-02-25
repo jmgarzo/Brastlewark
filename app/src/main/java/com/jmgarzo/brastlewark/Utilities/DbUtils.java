@@ -49,6 +49,35 @@ public class DbUtils {
     public static final int COL_INHABITANT_HAIR_COLOR = 6;
 
 
+    public static final String[] INHABITANT_PROFESSION_COLUMNS = {
+            BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry._ID,
+            BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry.NAME,
+            BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry.THUMBNAIL,
+            BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry.AGE,
+            BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry.WEIGHT,
+            BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry.HEIGHT,
+            BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry.HAIR_COLOR,
+            " Group_Concat " + "( " + BrastlewarkContract.ProfessionsEntry.TABLE_NAME + "." + BrastlewarkContract.ProfessionsEntry.NAME+ ")"
+//            select inhabitants._id,inhabitants.name,inhabitants.thumbnail, Group_Concat(professions.name)
+//            from inhabitants INNER JOIN professions  INNER JOIN inhabitant_profession
+//            on inhabitants._id = inhabitant_profession.inhabitant_id
+//            and inhabitant_profession.profession_id = professions._id
+//            where inhabitants._id = 2
+//            group by inhabitants._id + "." + BrastlewarkContract.ProfessionsEntry.NAME
+    };
+
+    public static final int COL_INHABITANT_PROFESSION_ID = 0;
+    public static final int COL_INHABITANT_PROFESSION_INHABITANT_NAME = 1;
+    public static final int COL_INHABITANT_PROFESSION_THUMBNAIL = 2;
+    public static final int COL_INHABITANT_PROFESSION_AGE = 3;
+    public static final int COL_INHABITANT_PROFESSION_WEIGHT = 4;
+    public static final int COL_INHABITANT_PROFESSION_HEIGHT = 5;
+    public static final int COL_INHABITANT_PROFESSION_HAIR_COLOR = 6;
+    public static final int COL_INHABITANT_PROFESSION_PROFESSION_NAMES = 7;
+
+
+
+
     public static ArrayList<Integer> getIdFriends(Context context, ArrayList<String> friendsNameList) {
 
         ArrayList<Integer> idFriendsList = new ArrayList<>();

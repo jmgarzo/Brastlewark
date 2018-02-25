@@ -1,9 +1,12 @@
 package com.jmgarzo.brastlewark.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import com.jmgarzo.brastlewark.Utilities.DbUtils;
 import com.jmgarzo.brastlewark.model.data.BrastlewarkContract;
 
 import java.util.List;
@@ -23,6 +26,35 @@ public class Inhabitant implements Parcelable {
     private String hair_color;
     private List<Profession> listProfession;
     private List<String> listFriends;
+
+    private final static String LOG_TAG = Inhabitant.class.getSimpleName();
+
+    public Inhabitant(){}
+
+    /**
+     * Construct a new Inahbitant from a cursor's first row.
+     *
+     * @param cursor
+     */
+    public Inhabitant(Cursor cursor) {
+        if (cursor != null && cursor.moveToFirst()) {
+            if (cursor.getCount() > 1) {
+                Log.d(LOG_TAG, "Cursor have more than one rows");
+            }
+            cursorToInhabitant(cursor);
+        }
+    }
+
+    /**
+     * Inhabitant's constructor from a cursor and a position
+     * @param cursor
+     * @param position
+     */
+    public Inhabitant(Cursor cursor, int position) {
+        if (cursor != null && cursor.moveToPosition(position)) {
+            cursorToInhabitant(cursor);
+        }
+    }
 
     public int getId() {
         return id;
@@ -111,6 +143,18 @@ public class Inhabitant implements Parcelable {
     }
 
 
+    private void cursorToInhabitant(Cursor cursor) {
+        id = cursor.getInt(DbUtils.COL_INHABITANT_ID);
+        name = cursor.getString(DbUtils.COL_INHABITANT_NAME);
+        thumbnail = cursor.getString(DbUtils.COL_INHABITANT_THUMBNAIL);
+        age = cursor.getInt(DbUtils.COL_INHABITANT_AGE);
+        weight = cursor.getDouble(DbUtils.COL_INHABITANT_WEIGHT);
+        height = cursor.getDouble(DbUtils.COL_INHABITANT_HEIGHT);
+        hair_color = cursor.getString(DbUtils.COL_INHABITANT_HAIR_COLOR);
+
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -128,8 +172,7 @@ public class Inhabitant implements Parcelable {
         dest.writeTypedList(this.listProfession);
     }
 
-    public Inhabitant() {
-    }
+
 
     protected Inhabitant(Parcel in) {
         this.id = in.readInt();

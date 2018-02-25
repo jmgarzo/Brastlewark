@@ -36,20 +36,47 @@ public class BrastlewarkProvider extends ContentProvider {
     private BrastlewarkDbHelper mOpenHelper;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-    private static final SQLiteQueryBuilder sProfessionsByInhabitantQueryBuilder;
+//    private static final SQLiteQueryBuilder sProfessionsByInhabitantQueryBuilder;
+//
+//    static {
+//        sProfessionsByInhabitantQueryBuilder = new SQLiteQueryBuilder();
+//
+//        //This is an inner join which looks like
+//        //bus_stop INNER JOIN route_bus_stop ON weather.location_id = location._id
+//        sProfessionsByInhabitantQueryBuilder.setTables(
+//                BrastlewarkContract.ProfessionsEntry.TABLE_NAME + " INNER JOIN " +
+//                        BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME +
+//                        " ON " + BrastlewarkContract.ProfessionsEntry.TABLE_NAME +
+//                        "." + BrastlewarkContract.ProfessionsEntry._ID +
+//                        " = " + BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME +
+//                        "." + BrastlewarkContract.InhabitantProfessionEntry.PROFESSION_ID);
+//    }
+
+    public Cursor getInhabitantProfession(Uri uri, String[] projection,String selection,String[] selectionArgs, String sortOrder) {
+        return sProfessionsByInhabitantBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                BrastlewarkContract.InhabitantsEntry.TABLE_NAME +"."+BrastlewarkContract.InhabitantsEntry._ID,
+                null,
+                sortOrder
+        );
+    }
+
+    private static final SQLiteQueryBuilder sProfessionsByInhabitantBuilder;
+
 
     static {
-        sProfessionsByInhabitantQueryBuilder = new SQLiteQueryBuilder();
-
-        //This is an inner join which looks like
-        //bus_stop INNER JOIN route_bus_stop ON weather.location_id = location._id
-        sProfessionsByInhabitantQueryBuilder.setTables(
-                BrastlewarkContract.ProfessionsEntry.TABLE_NAME + " INNER JOIN " +
-                        BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME +
-                        " ON " + BrastlewarkContract.ProfessionsEntry.TABLE_NAME +
-                        "." + BrastlewarkContract.ProfessionsEntry._ID +
-                        " = " + BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME +
-                        "." + BrastlewarkContract.InhabitantProfessionEntry.PROFESSION_ID);
+        sProfessionsByInhabitantBuilder = new SQLiteQueryBuilder();
+        sProfessionsByInhabitantBuilder.setTables(
+                BrastlewarkContract.InhabitantsEntry.TABLE_NAME +
+                " INNER JOIN " + BrastlewarkContract.ProfessionsEntry.TABLE_NAME +
+                " INNER JOIN " + BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME +
+                " ON " +
+                BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry._ID +
+                " = " + BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantProfessionEntry.INHABITANT_ID +
+                " AND " + BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantProfessionEntry.PROFESSION_ID +
+                " = " + BrastlewarkContract.ProfessionsEntry.TABLE_NAME + "." + BrastlewarkContract.ProfessionsEntry._ID);
     }
 
 
@@ -57,7 +84,7 @@ public class BrastlewarkProvider extends ContentProvider {
             Uri uri, String[] projection, String sortOrder) {
         String selection = BrastlewarkContract.InhabitantProfessionEntry.INHABITANT_ID + " = ? ";
         String[] selectionArgs = new String[]{BrastlewarkContract.InhabitantProfessionEntry.getInhabitantIdFromUri(uri)};
-        return sProfessionsByInhabitantQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        return sProfessionsByInhabitantBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -143,15 +170,19 @@ public class BrastlewarkProvider extends ContentProvider {
             }
 
             case INHABITANT_PROFESSION: {
-                returnCursor = mOpenHelper.getReadableDatabase().query(
-                        BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
+
+//                returnCursor = mOpenHelper.getReadableDatabase().query(
+//                        BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME,
+//                        projection,
+//                        selection,
+//                        selectionArgs,
+//                        BrastlewarkContract.InhabitantsEntry._ID,
+//                        null,
+//                        sortOrder
+//                );
+                returnCursor = getInhabitantProfession(uri, projection,selection,selectionArgs, sortOrder);
+
+
                 break;
             }
 

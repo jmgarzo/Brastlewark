@@ -73,6 +73,10 @@ public class BrastlewarkContract {
             return uri.getPathSegments().get(1);
         }
 
+        public static Uri buildInhabitantAndProfessions(String inhabitantId) {
+            return CONTENT_URI.buildUpon().appendPath(inhabitantId).build();
+        }
+
 
     }
 
