@@ -57,18 +57,17 @@ public class InhabitantAdapter extends RecyclerView.Adapter<InhabitantAdapter.In
         mCursor.moveToPosition(position);
         String thumbnailPath = mCursor.getString(DbUtils.COL_INHABITANT_THUMBNAIL);
 
-//        Picasso.with(mContext)
-//                .load(thumbnailPath)
-//                .placeholder(R.drawable.placeholder)
-//                .error(R.drawable.ic_broken_image_black_48px)
-//                .tag(mContext)
-//                .into(holder.mImage);
-
-        Glide.with(mContext).load(thumbnailPath).
-                apply(RequestOptions.circleCropTransform()).into(holder.mImage);
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(R.drawable.placeholder);
+        requestOptions.error(R.drawable.ic_broken_image_black_48px);
+        Glide.with(mContext).setDefaultRequestOptions(requestOptions).
+                load(thumbnailPath).
+                apply(RequestOptions.circleCropTransform()).
+                into(holder.mImage);
 
         String name = mCursor.getString(DbUtils.COL_INHABITANT_PROFESSION_INHABITANT_NAME);
-        String professions = mCursor.getString(DbUtils.COL_INHABITANT_PROFESSION_PROFESSION_NAMES);
+        String professionsResult = mCursor.getString(DbUtils.COL_INHABITANT_PROFESSION_PROFESSION_NAMES);
+        String professions = professionsResult.replace(",",", ");
 
         holder.mName.setText(name);
         holder.mPropfessions.setText(professions);

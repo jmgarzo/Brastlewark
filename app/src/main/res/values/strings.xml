@@ -2,5 +2,8 @@
     <string name="app_name">Brastlewark</string>
     <string name="content_authority">com.jmgarzo.brastlewark</string>
 
+    <string name="label_search">Search</string>
+    <string name="main_search_hint">Name or profession</string>
+
 
 </resources>
