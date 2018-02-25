@@ -76,6 +76,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             mInhabitant = intent.getParcelableExtra(MainActivityFragment.INHABITANT_INTENT_TAG);
         }
 
+        getActivity().setTitle(mInhabitant.getName());
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.placeholder);
         requestOptions.error(R.drawable.ic_broken_image_black_48px);
