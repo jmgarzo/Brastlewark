@@ -131,7 +131,7 @@ public class Inhabitant implements Parcelable {
     public ContentValues getContentValues() {
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put(BrastlewarkContract.InhabitantsEntry._ID,getId());
+        contentValues.put(BrastlewarkContract.InhabitantProfessionEntry._ID,getId());
         contentValues.put(BrastlewarkContract.InhabitantsEntry.NAME,getName());
         contentValues.put(BrastlewarkContract.InhabitantsEntry.THUMBNAIL,getThumbnail());
         contentValues.put(BrastlewarkContract.InhabitantsEntry.AGE,getAge());

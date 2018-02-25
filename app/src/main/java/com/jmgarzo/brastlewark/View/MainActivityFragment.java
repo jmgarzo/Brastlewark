@@ -3,6 +3,7 @@ package com.jmgarzo.brastlewark.View;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import butterknife.ButterKnife;
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, InhabitantAdapter.InhabitantAdapterOnClickHandler {
 
     private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    public static final String INHABITANT_INTENT_TAG = "inhabitant_tag";
 
     private static final int ID_INHABITANT_LOADER = 21;
     public static final String FILTER_TAG = "arg_filter_tag";
@@ -182,6 +184,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onClick(Inhabitant inhabitant) {
+
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        intent.putExtra(INHABITANT_INTENT_TAG, inhabitant);
+        startActivity(intent);
 
     }
 }

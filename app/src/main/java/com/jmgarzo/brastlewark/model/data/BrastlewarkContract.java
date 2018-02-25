@@ -33,6 +33,10 @@ public class BrastlewarkContract {
         public static final String HEIGHT = "height";
         public static final String HAIR_COLOR =  "hair_color";
 
+        public static Uri buildFriendsAndInhabitants(String inhabitantId) {
+            return CONTENT_URI.buildUpon().appendPath(inhabitantId).build();
+        }
+
 
         public static final String CONTENT_DIR_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TABLE_NAME;
@@ -49,6 +53,10 @@ public class BrastlewarkContract {
         public static final String _ID = "_id";
 
         public static final String NAME = "name";
+
+        public static Uri buildInhabitantAndProfessions(String inhabitantId) {
+            return CONTENT_URI.buildUpon().appendPath(inhabitantId).build();
+        }
 
 
         public static final String CONTENT_DIR_TYPE =
@@ -73,12 +81,10 @@ public class BrastlewarkContract {
             return uri.getPathSegments().get(1);
         }
 
-        public static Uri buildInhabitantAndProfessions(String inhabitantId) {
-            return CONTENT_URI.buildUpon().appendPath(inhabitantId).build();
-        }
-
-
     }
+
+
+
 
     public static final class InhabitantFriendEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INHABITANT_FRIEND).build();
@@ -95,6 +101,7 @@ public class BrastlewarkContract {
         public static String getInhabitantIdFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
+
     }
 
 

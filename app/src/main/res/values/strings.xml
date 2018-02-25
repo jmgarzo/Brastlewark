@@ -5,5 +5,14 @@
     <string name="label_search">Search</string>
     <string name="main_search_hint">Name or profession</string>
 
+    <string name="hair_color_label">Hair color: </string>
+    <string name="years_label"> years</string>
+    <string name="kg_label"> kg</string>
+    <string name="cm_label"> cm</string>
+
+    <string name="professions_label">Professions</string>
+    <string name="friends_label">Friends</string>
+
+
 
 </resources>
