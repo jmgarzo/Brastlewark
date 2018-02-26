@@ -3,7 +3,9 @@ package com.jmgarzo.brastlewark.model.sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.jmgarzo.brastlewark.Utilities.DbUtils;
@@ -11,6 +13,8 @@ import com.jmgarzo.brastlewark.Utilities.NetworkUtils;
 import com.jmgarzo.brastlewark.model.Inhabitant;
 import com.jmgarzo.brastlewark.model.Profession;
 import com.jmgarzo.brastlewark.model.data.BrastlewarkContract;
+import com.jmgarzo.brastlewark.model.sync.services.DeleteDatabaseService;
+import com.jmgarzo.brastlewark.model.sync.services.SyncInhabitantService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +26,8 @@ import java.util.HashMap;
 public class BrastlewarkSyncTask {
 
     private static final String LOG_TAG = BrastlewarkSyncTask.class.getSimpleName();
+
+    private static boolean sInitialized;
 
 
     synchronized public static void syncInhabitants(Context context) {
@@ -55,8 +61,6 @@ public class BrastlewarkSyncTask {
 
                 int inhabitantFriendAdded = addInhabitantFriend(context, inhabitantsList);
                 Log.v(LOG_TAG, inhabitantFriendAdded + " Inhabitant-Friend added ");
-
-
 
 
             }
@@ -205,6 +209,23 @@ public class BrastlewarkSyncTask {
                 totalContentValuesList.toArray(new ContentValues[totalContentValuesList.size()]));
 
         return result;
+    }
+
+    synchronized public static void initialize(@NonNull final Context context) {
+        if (sInitialized) return;
+        sInitialized = true;
+        startImmediateSync(context);
+
+
+    }
+
+    public static void startImmediateSync(@NonNull final Context context) {
+
+        Intent intentDeleteDatabaseService = new Intent(context, DeleteDatabaseService.class);
+        context.startService(intentDeleteDatabaseService);
+
+        Intent intentSyncInhabitantsService = new Intent(context, SyncInhabitantService.class);
+        context.startService(intentSyncInhabitantsService);
     }
 
 }
