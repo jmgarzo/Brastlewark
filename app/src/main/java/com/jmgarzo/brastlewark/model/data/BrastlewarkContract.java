@@ -24,7 +24,7 @@ public class BrastlewarkContract {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INHABITANTS).build();
 
         public static final String TABLE_NAME = "inhabitants";
-        public static final String INAHABITANT_TABLE_ALIAS = " INA";
+        public static final String INHABITANT_TABLE_ALIAS = " INH";
         public static final String FRIEND_TABLE_ALIAS = " FRI";
         public static final String _ID = "_id";
 
@@ -40,6 +40,10 @@ public class BrastlewarkContract {
             return CONTENT_URI.buildUpon().appendPath(inhabitantId).build();
         }
 
+        public static String getInhabitantIdFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
+        }
+
 
         public static final String CONTENT_DIR_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TABLE_NAME;
@@ -53,6 +57,7 @@ public class BrastlewarkContract {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PROFESSIONS).build();
 
         public static final String TABLE_NAME = "professions";
+        public static final String PROFESSION_TABLE_ALIAS = " PRO";
         public static final String _ID = "_id";
 
         public static final String NAME = "name";
@@ -60,6 +65,8 @@ public class BrastlewarkContract {
         public static Uri buildInhabitantAndProfessions(String inhabitantId) {
             return CONTENT_URI.buildUpon().appendPath(inhabitantId).build();
         }
+
+
 
 
         public static final String CONTENT_DIR_TYPE =
@@ -72,6 +79,7 @@ public class BrastlewarkContract {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INHABITANT_PROFESSION).build();
 
         public static final String TABLE_NAME = "inhabitant_profession";
+        public static final String INHABITANT_PROFESSION_TABLE_ALIAS = " INHPRO";
         public static final String INHABITANT_ID = "inhabitant_id";
         public static final String PROFESSION_ID = "profession_id";
 

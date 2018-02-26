@@ -9,6 +9,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.jmgarzo.brastlewark.R;
+import com.jmgarzo.brastlewark.Utilities.DbUtils;
 import com.jmgarzo.brastlewark.model.Inhabitant;
 import com.jmgarzo.brastlewark.model.data.BrastlewarkContract;
 
@@ -29,9 +33,11 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        FriendAdapter.FriendAdapterOnClickHandler{
 
     Inhabitant mInhabitant;
+    FriendAdapter mFriendAdapter;
 
     ArrayList<String> mProfessionsList;
 
@@ -53,10 +59,10 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     TextView mProfessions;
     @BindView(R.id.detail_friends_label)
     TextView mFriendsLabel;
-    @BindView(R.id.detail_friends_values)
-    TextView mFriends;
-//    @BindView(R.id.detail_friend_recyclerview)
-//    RecyclerView mFriendRecyclerView;
+//    @BindView(R.id.detail_friends_values)
+//    TextView mFriends;
+    @BindView(R.id.detail_friend_recyclerview)
+    RecyclerView mFriendRecyclerView;
 
 
     public DetailActivityFragment() {
@@ -97,6 +103,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         mFriendsLabel.setVisibility(View.INVISIBLE);
 
+        LinearLayoutManager friendLayoutManager =
+                new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+
+        mFriendRecyclerView.setLayoutManager(friendLayoutManager);
+        mFriendRecyclerView.setHasFixedSize(true);
+        mFriendRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),
+                DividerItemDecoration.VERTICAL));
+
+        mFriendAdapter = new FriendAdapter(getActivity(), this);
+        mFriendRecyclerView.setAdapter(mFriendAdapter);
+
 
         getActivity().getSupportLoaderManager().initLoader(PROFESSION_LOADER, null, this);
         getActivity().getSupportLoaderManager().initLoader(FRIENDS_LOADER, null, this);
@@ -123,7 +140,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
                 return new CursorLoader(getActivity(),
                         uri,
-                        new String[]{BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS +"."+ BrastlewarkContract.InhabitantsEntry.NAME},
+                        DbUtils.FRIEND_PROFESSION_COLUMNS,
                         null,
                         null,
                         null);
@@ -159,26 +176,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 break;
             }
             case FRIENDS_LOADER: {
-                ArrayList<String> friendsList = new ArrayList<>();
 
-                String friends = "";
-
-                if (data.moveToFirst()) {
-                    do {
-                        friendsList.add(data.getString(0));
-                        mFriendsLabel.setVisibility(View.VISIBLE);
-                    } while (data.moveToNext());
+                mFriendAdapter.swapCursor(data);
+                if(data.moveToFirst()){
+                    mFriendsLabel.setVisibility(View.VISIBLE);
                 }
-
-                for (int i = 0; i < friendsList.size(); i++) {
-                    if (i == friendsList.size() - 1) {
-                        friends = friends.concat(friendsList.get(i));
-                    } else {
-                        friends = friends.concat(friendsList.get(i)).concat(", ");
-                    }
-                }
-                mFriends.setText(friends);
-
                 break;
             }
         }
@@ -188,10 +190,17 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
             case FRIENDS_LOADER: {
-                break;
+                mFriendAdapter.swapCursor(null);
+
             }
+                break;
+
         }
     }
 
 
+    @Override
+    public void onClick(Inhabitant inhabitant) {
+
+    }
 }

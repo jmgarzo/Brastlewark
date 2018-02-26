@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/inhabitant_image"
+        android:id="@+id/friend_image"
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:layout_marginBottom="8dp"
@@ -27,7 +27,7 @@
         app:layout_constraintGuide_begin="90dp" />
 
     <TextView
-        android:id="@+id/inhabitant_name"
+        android:id="@+id/friend_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -39,7 +39,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/inhabitant_professions"
+        android:id="@+id/friend_professions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -49,5 +49,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/inhabitant_name" />
+        app:layout_constraintTop_toBottomOf="@+id/friend_name" />
+
 </android.support.constraint.ConstraintLayout>

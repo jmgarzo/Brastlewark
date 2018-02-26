@@ -76,34 +76,70 @@ public class BrastlewarkProvider extends ContentProvider {
                         " = " + BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantProfessionEntry.PROFESSION_ID);
     }
 
+//    private static final SQLiteQueryBuilder sFriendsByInhabitantIdBuilder;
+//
+//    static {
+//        sFriendsByInhabitantIdBuilder = new SQLiteQueryBuilder();
+//        sFriendsByInhabitantIdBuilder.setTables(
+//                BrastlewarkContract.InhabitantsEntry.TABLE_NAME  +BrastlewarkContract.InhabitantsEntry.INHABITANT_TABLE_ALIAS +
+//                        " INNER JOIN " + BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME + BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS +
+//                        " INNER JOIN " + BrastlewarkContract.InhabitantsEntry.TABLE_NAME + BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS +
+//                        " ON " +
+//                        BrastlewarkContract.InhabitantsEntry.INHABITANT_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry._ID +
+//                        " = " + BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS + "." + BrastlewarkContract.InhabitantFriendEntry.INHABITANT_ID +
+//                        " AND " + BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS + "." + BrastlewarkContract.InhabitantFriendEntry.FRIEND_ID +
+//                        " = " + BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS +"." + BrastlewarkContract.InhabitantsEntry._ID
+//        );
+//    }
+
+
+//    select  FRI.*,group_concat(PRO.NAME)
+//
+//    from inhabitants INA
+//    inner join inhabitant_friend INAFRI
+//    on INA._id = INAFRI.inhabitant_id
+//    inner join inhabitants FRI
+//    on INAFRI.friend_id = FRI._id
+//    left join inhabitant_profession INAPRO
+//    on FRI._id = (INAPRO.Inhabitant_ID)
+//    left join professions PRO
+//    on INAPRO.PROFESSION_ID = PRO._ID
+//
+//    where INA._id = 0
+//    group by FRI.NAME
     private static final SQLiteQueryBuilder sFriendsByInhabitantIdBuilder;
 
     static {
         sFriendsByInhabitantIdBuilder = new SQLiteQueryBuilder();
         sFriendsByInhabitantIdBuilder.setTables(
-                BrastlewarkContract.InhabitantsEntry.TABLE_NAME  +BrastlewarkContract.InhabitantsEntry.INAHABITANT_TABLE_ALIAS +
+                BrastlewarkContract.InhabitantsEntry.TABLE_NAME  + BrastlewarkContract.InhabitantsEntry.INHABITANT_TABLE_ALIAS +
                         " INNER JOIN " + BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME + BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS +
+                         " ON " + BrastlewarkContract.InhabitantsEntry.INHABITANT_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry._ID
+                        +" = "+ BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS +"."+ BrastlewarkContract.InhabitantFriendEntry.INHABITANT_ID +
                         " INNER JOIN " + BrastlewarkContract.InhabitantsEntry.TABLE_NAME + BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS +
-                        " ON " +
-                        BrastlewarkContract.InhabitantsEntry.INAHABITANT_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry._ID +
-                        " = " + BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS + "." + BrastlewarkContract.InhabitantFriendEntry.INHABITANT_ID +
-                        " AND " + BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS + "." + BrastlewarkContract.InhabitantFriendEntry.FRIEND_ID +
-                        " = " + BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS +"." + BrastlewarkContract.InhabitantsEntry._ID
-        );
+                        " ON " + BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS + "." + BrastlewarkContract.InhabitantFriendEntry.FRIEND_ID +
+                        " = " + BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry._ID +
+                        " LEFT JOIN " + BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME + BrastlewarkContract.InhabitantProfessionEntry.INHABITANT_PROFESSION_TABLE_ALIAS +
+                        " ON " + BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS+"."+ BrastlewarkContract.InhabitantsEntry._ID +
+                        " = " + BrastlewarkContract.InhabitantProfessionEntry.INHABITANT_PROFESSION_TABLE_ALIAS+"."+ BrastlewarkContract.InhabitantProfessionEntry.INHABITANT_ID +
+                        " LEFT JOIN " + BrastlewarkContract.ProfessionsEntry.TABLE_NAME + BrastlewarkContract.ProfessionsEntry.PROFESSION_TABLE_ALIAS +
+                        " ON " + BrastlewarkContract.InhabitantProfessionEntry.INHABITANT_PROFESSION_TABLE_ALIAS+"."+ BrastlewarkContract.InhabitantProfessionEntry.PROFESSION_ID +
+                        " = " + BrastlewarkContract.ProfessionsEntry.PROFESSION_TABLE_ALIAS + "."+ BrastlewarkContract.ProfessionsEntry._ID);
+
+
     }
 
 
-    //    select * from inhabitants where inhabitants._id in (select friend_id from inhabitant_friend
-//            where inhabitant_friend.inhabitant_id = 0)
+
     private Cursor getFriendsByInhabitantId(
             Uri uri, String[] projection, String sortOrder) {
-        String selection = BrastlewarkContract.InhabitantsEntry.INAHABITANT_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry._ID + " = ? ";
-        String[] selectionArgs = new String[]{BrastlewarkContract.InhabitantProfessionEntry.getInhabitantIdFromUri(uri)};
+        String selection = BrastlewarkContract.InhabitantsEntry.INHABITANT_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry._ID + " = ? ";
+        String[] selectionArgs = new String[]{BrastlewarkContract.InhabitantsEntry.getInhabitantIdFromUri(uri)};
         return sFriendsByInhabitantIdBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
-                null,
+                BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS+ "."+ BrastlewarkContract.InhabitantsEntry.NAME,
                 null,
                 sortOrder
         );
