@@ -41,10 +41,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private static final int ID_INHABITANT_LOADER = 21;
     public static final String FILTER_TAG = "arg_filter_tag";
 
-
     private String searchViewText = "";
-
-
 
     @BindView(R.id.inhabitant_recycler_view)
     RecyclerView mRecyclerView;

@@ -37,21 +37,6 @@ public class BrastlewarkProvider extends ContentProvider {
     private BrastlewarkDbHelper mOpenHelper;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-//    private static final SQLiteQueryBuilder sProfessionsByInhabitantQueryBuilder;
-//
-//    static {
-//        sProfessionsByInhabitantQueryBuilder = new SQLiteQueryBuilder();
-//
-//        //This is an inner join which looks like
-//        //bus_stop INNER JOIN route_bus_stop ON weather.location_id = location._id
-//        sProfessionsByInhabitantQueryBuilder.setTables(
-//                BrastlewarkContract.ProfessionsEntry.TABLE_NAME + " INNER JOIN " +
-//                        BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME +
-//                        " ON " + BrastlewarkContract.ProfessionsEntry.TABLE_NAME +
-//                        "." + BrastlewarkContract.ProfessionsEntry._ID +
-//                        " = " + BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME +
-//                        "." + BrastlewarkContract.InhabitantProfessionEntry.PROFESSION_ID);
-//    }
 
     public Cursor getInhabitantProfession(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         return sProfessionsByInhabitantBuilder.query(mOpenHelper.getReadableDatabase(),
@@ -81,11 +66,6 @@ public class BrastlewarkProvider extends ContentProvider {
 
     private static final SQLiteQueryBuilder sProfessionsByInhabitantIdBuilder;
 
-    /*
-     select * from professions inner join inhabitant_profession
-on professions._id = inhabitant_profession.profession_id
-where inhabitant_profession.inhabitant_id = 1
-     */
     static {
         sProfessionsByInhabitantIdBuilder = new SQLiteQueryBuilder();
         sProfessionsByInhabitantIdBuilder.setTables(
@@ -98,32 +78,26 @@ where inhabitant_profession.inhabitant_id = 1
 
     private static final SQLiteQueryBuilder sFriendsByInhabitantIdBuilder;
 
-
-//    select FRI.*
-//    from inhabitants INA inner join inhabitant_friend INAFRI inner join inhabitants FRI
-//    on INA._id = INAFRI.inhabitant_id and INAFRI.friend_id = FRI._id
-//    where INA._id = 0
-
     static {
         sFriendsByInhabitantIdBuilder = new SQLiteQueryBuilder();
         sFriendsByInhabitantIdBuilder.setTables(
-                BrastlewarkContract.InhabitantsEntry.TABLE_NAME + " INA " +
-                        " INNER JOIN " + BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME + " INAFRI " +
-                        " INNER JOIN " + BrastlewarkContract.InhabitantsEntry.TABLE_NAME + " FRI " +
+                BrastlewarkContract.InhabitantsEntry.TABLE_NAME  +BrastlewarkContract.InhabitantsEntry.INAHABITANT_TABLE_ALIAS +
+                        " INNER JOIN " + BrastlewarkContract.InhabitantFriendEntry.TABLE_NAME + BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS +
+                        " INNER JOIN " + BrastlewarkContract.InhabitantsEntry.TABLE_NAME + BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS +
                         " ON " +
-                        "INA."+ BrastlewarkContract.InhabitantsEntry._ID +
-                        " = " + "INAFRI." + BrastlewarkContract.InhabitantFriendEntry.INHABITANT_ID+
-                        " AND INAFRI."+ BrastlewarkContract.InhabitantFriendEntry.FRIEND_ID +
-                        " = " + "FRI."+ BrastlewarkContract.InhabitantsEntry._ID
+                        BrastlewarkContract.InhabitantsEntry.INAHABITANT_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry._ID +
+                        " = " + BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS + "." + BrastlewarkContract.InhabitantFriendEntry.INHABITANT_ID +
+                        " AND " + BrastlewarkContract.InhabitantFriendEntry.TABLE_ALIAS + "." + BrastlewarkContract.InhabitantFriendEntry.FRIEND_ID +
+                        " = " + BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS +"." + BrastlewarkContract.InhabitantsEntry._ID
         );
     }
 
 
-//    select * from inhabitants where inhabitants._id in (select friend_id from inhabitant_friend
+    //    select * from inhabitants where inhabitants._id in (select friend_id from inhabitant_friend
 //            where inhabitant_friend.inhabitant_id = 0)
     private Cursor getFriendsByInhabitantId(
             Uri uri, String[] projection, String sortOrder) {
-        String selection = "INA." + BrastlewarkContract.InhabitantsEntry._ID + " = ? ";
+        String selection = BrastlewarkContract.InhabitantsEntry.INAHABITANT_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry._ID + " = ? ";
         String[] selectionArgs = new String[]{BrastlewarkContract.InhabitantProfessionEntry.getInhabitantIdFromUri(uri)};
         return sFriendsByInhabitantIdBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
@@ -193,15 +167,7 @@ where inhabitant_profession.inhabitant_id = 1
                 break;
             }
             case FRIENDS_BY_INHABITANT_ID: {
-//                returnCursor = mOpenHelper.getReadableDatabase().query(
-//                        BrastlewarkContract.InhabitantsEntry.TABLE_NAME,
-//                        projection,
-//                        BrastlewarkContract.InhabitantsEntry._ID + " = ?",
-//                        new String[]{uri.getPathSegments().get(1)},
-//                        null,
-//                        null,
-//                        sortOrder
-//                );
+
                 returnCursor = getFriendsByInhabitantId(uri, projection, sortOrder);
                 break;
             }
@@ -225,15 +191,6 @@ where inhabitant_profession.inhabitant_id = 1
 
             case INHABITANT_PROFESSION: {
 
-//                returnCursor = mOpenHelper.getReadableDatabase().query(
-//                        BrastlewarkContract.InhabitantProfessionEntry.TABLE_NAME,
-//                        projection,
-//                        selection,
-//                        selectionArgs,
-//                        BrastlewarkContract.InhabitantsEntry._ID,
-//                        null,
-//                        sortOrder
-//                );
                 returnCursor = getInhabitantProfession(uri, projection, selection, selectionArgs, sortOrder);
 
 

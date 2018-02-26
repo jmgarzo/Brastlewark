@@ -119,7 +119,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
                 return new CursorLoader(getActivity(),
                         uri,
-                        new String[]{"FRI."+ BrastlewarkContract.InhabitantsEntry.NAME},
+                        new String[]{BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS +"."+ BrastlewarkContract.InhabitantsEntry.NAME},
                         null,
                         null,
                         null);

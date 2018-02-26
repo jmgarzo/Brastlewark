@@ -24,6 +24,8 @@ public class BrastlewarkContract {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INHABITANTS).build();
 
         public static final String TABLE_NAME = "inhabitants";
+        public static final String INAHABITANT_TABLE_ALIAS = " INA";
+        public static final String FRIEND_TABLE_ALIAS = " FRI";
         public static final String _ID = "_id";
 
         public static final String NAME = "name";
@@ -31,7 +33,8 @@ public class BrastlewarkContract {
         public static final String AGE = "age";
         public static final String WEIGHT = "weight";
         public static final String HEIGHT = "height";
-        public static final String HAIR_COLOR =  "hair_color";
+        public static final String HAIR_COLOR = "hair_color";
+
 
         public static Uri buildFriendsAndInhabitants(String inhabitantId) {
             return CONTENT_URI.buildUpon().appendPath(inhabitantId).build();
@@ -84,12 +87,12 @@ public class BrastlewarkContract {
     }
 
 
-
-
     public static final class InhabitantFriendEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INHABITANT_FRIEND).build();
 
+
         public static final String TABLE_NAME = "inhabitant_friend";
+        public static final String TABLE_ALIAS = " INAFRI";
         public static final String INHABITANT_ID = "inhabitant_id";
         public static final String FRIEND_ID = "friend_id";
 
