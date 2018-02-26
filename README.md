@@ -5,4 +5,7 @@ I decided to make a custom ContentProvider to show that I understand how it work
 I have used Glide to manage the images.
 
 ### Test
-I have made
+
+I have made a simples database test.
+
+I would have liked to make some espresso test to check the filters.
