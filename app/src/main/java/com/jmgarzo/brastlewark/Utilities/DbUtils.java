@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.jmgarzo.brastlewark.model.Inhabitant;
 import com.jmgarzo.brastlewark.model.data.BrastlewarkContract;
 
 import java.util.ArrayList;
@@ -49,6 +48,25 @@ public class DbUtils {
     public static final int COL_INHABITANT_HAIR_COLOR = 6;
 
 
+    public static final String[] FRIEND_COLUMNS = {
+            BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry._ID,
+            BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry.NAME,
+            BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry.THUMBNAIL,
+            BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry.AGE,
+            BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry.WEIGHT,
+            BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry.HEIGHT,
+            BrastlewarkContract.InhabitantsEntry.FRIEND_TABLE_ALIAS + "." + BrastlewarkContract.InhabitantsEntry.HAIR_COLOR
+
+    };
+
+    public static final int COL_FRIEND_ID = 0;
+    public static final int COL_FRIEND_NAME = 1;
+    public static final int COL_FRIEND_THUMBNAIL = 2;
+    public static final int COL_FRIEND_AGE = 3;
+    public static final int COL_FRIEND_WEIGHT = 4;
+    public static final int COL_FRIEND = 5;
+    public static final int COL_FRIEND_COLOR = 6;
+
     public static final String[] INHABITANT_PROFESSION_COLUMNS = {
             BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry._ID,
             BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry.NAME,
@@ -57,13 +75,8 @@ public class DbUtils {
             BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry.WEIGHT,
             BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry.HEIGHT,
             BrastlewarkContract.InhabitantsEntry.TABLE_NAME + "." + BrastlewarkContract.InhabitantsEntry.HAIR_COLOR,
-            " Group_Concat " + "( " + BrastlewarkContract.ProfessionsEntry.TABLE_NAME + "." + BrastlewarkContract.ProfessionsEntry.NAME+ ")"
-//            select inhabitants._id,inhabitants.name,inhabitants.thumbnail, Group_Concat(professions.name)
-//            from inhabitants INNER JOIN professions  INNER JOIN inhabitant_profession
-//            on inhabitants._id = inhabitant_profession.inhabitant_id
-//            and inhabitant_profession.profession_id = professions._id
-//            where inhabitants._id = 2
-//            group by inhabitants._id + "." + BrastlewarkContract.ProfessionsEntry.NAME
+            " Group_Concat " + "( " + BrastlewarkContract.ProfessionsEntry.TABLE_NAME + "." + BrastlewarkContract.ProfessionsEntry.NAME + ")"
+
     };
 
     public static final int COL_INHABITANT_PROFESSION_ID = 0;
@@ -74,8 +87,6 @@ public class DbUtils {
     public static final int COL_INHABITANT_PROFESSION_HEIGHT = 5;
     public static final int COL_INHABITANT_PROFESSION_HAIR_COLOR = 6;
     public static final int COL_INHABITANT_PROFESSION_PROFESSION_NAMES = 7;
-
-
 
 
     public static ArrayList<Integer> getIdFriends(Context context, ArrayList<String> friendsNameList) {

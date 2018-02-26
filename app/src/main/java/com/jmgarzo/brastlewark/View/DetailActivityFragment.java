@@ -51,6 +51,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     ImageView mImageView;
     @BindView(R.id.detail_profession_values)
     TextView mProfessions;
+    @BindView(R.id.detail_friends_label)
+    TextView mFriendsLabel;
     @BindView(R.id.detail_friends_values)
     TextView mFriends;
 //    @BindView(R.id.detail_friend_recyclerview)
@@ -92,6 +94,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         String height = mInhabitant.getHeight() + " " + getString(R.string.cm_label);
         mHeight.setText(height);
         mHairColor.setText(mInhabitant.getHair_color());
+
+        mFriendsLabel.setVisibility(View.INVISIBLE);
 
 
         getActivity().getSupportLoaderManager().initLoader(PROFESSION_LOADER, null, this);
@@ -162,6 +166,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 if (data.moveToFirst()) {
                     do {
                         friendsList.add(data.getString(0));
+                        mFriendsLabel.setVisibility(View.VISIBLE);
                     } while (data.moveToNext());
                 }
 
