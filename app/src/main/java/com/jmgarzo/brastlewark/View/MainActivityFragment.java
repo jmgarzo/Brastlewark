@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +26,8 @@ import com.jmgarzo.brastlewark.R;
 import com.jmgarzo.brastlewark.Utilities.DbUtils;
 import com.jmgarzo.brastlewark.model.Inhabitant;
 import com.jmgarzo.brastlewark.model.data.BrastlewarkContract;
+import com.jmgarzo.brastlewark.model.sync.services.DeleteDatabaseService;
+import com.jmgarzo.brastlewark.model.sync.services.SyncInhabitantService;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,6 +48,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @BindView(R.id.inhabitant_recycler_view)
     RecyclerView mRecyclerView;
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     InhabitantAdapter mInhabitantAdapter;
 
@@ -62,6 +67,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         ButterKnife.bind(this, viewRoot);
         setHasOptionsMenu(true);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData();
+            }
+        });
+        mSwipeRefreshLayout.setRefreshing(true);
 
         LinearLayoutManager inhabitantLayoutManager =
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -137,6 +150,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case ID_INHABITANT_LOADER: {
+
                 if(args!= null){
                     String filterArg = args.getString(FILTER_TAG);
                     String selection = " ( " +
@@ -171,6 +185,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mInhabitantAdapter.swapCursor(data);
+        mSwipeRefreshLayout.setRefreshing(false);
+
     }
 
     @Override
@@ -186,5 +202,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         intent.putExtra(INHABITANT_INTENT_TAG, inhabitant);
         startActivity(intent);
 
+    }
+
+    private void refreshData(){
+        Intent intentDeleteDatabaseService = new Intent(getContext(), DeleteDatabaseService.class);
+        getContext().startService(intentDeleteDatabaseService);
+
+        Intent intentSyncInhabitantsService = new Intent(getContext(), SyncInhabitantService.class);
+        getContext().startService(intentSyncInhabitantsService);
     }
 }
